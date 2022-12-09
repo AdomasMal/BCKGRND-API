@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BCKGRND.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20221115194449_AuthTest")]
-    partial class AuthTest
+    [Migration("20221130071925_authTest3")]
+    partial class authTest3
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

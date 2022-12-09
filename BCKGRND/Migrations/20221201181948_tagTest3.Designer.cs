@@ -3,6 +3,7 @@ using System;
 using BCKGRND.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BCKGRND.Migrations
 {
     [DbContext(typeof(DBContext))]
-    partial class UserContextModelSnapshot : ModelSnapshot
+    [Migration("20221201181948_tagTest3")]
+    partial class tagTest3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -58,7 +60,7 @@ namespace BCKGRND.Migrations
 
                     b.HasIndex("LocationID");
 
-                    b.ToTable("Photos");
+                    b.ToTable("Photo");
                 });
 
             modelBuilder.Entity("BCKGRND.Models.Tag", b =>
@@ -72,7 +74,7 @@ namespace BCKGRND.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Tags");
+                    b.ToTable("Tag");
                 });
 
             modelBuilder.Entity("BCKGRND.Models.User", b =>
@@ -115,11 +117,9 @@ namespace BCKGRND.Migrations
 
             modelBuilder.Entity("BCKGRND.Models.Photo", b =>
                 {
-                    b.HasOne("BCKGRND.Models.Location", "Location")
+                    b.HasOne("BCKGRND.Models.Location", null)
                         .WithMany("Photos")
                         .HasForeignKey("LocationID");
-
-                    b.Navigation("Location");
                 });
 
             modelBuilder.Entity("LocationTag", b =>

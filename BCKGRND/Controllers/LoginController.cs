@@ -15,9 +15,9 @@ namespace BCKGRND.Controllers
     [ApiController]
     public class LoginController : Controller
     {
-        private readonly UserContext _context;
+        private readonly DBContext _context;
 
-        public LoginController(UserContext context)
+        public LoginController(DBContext context)
         {
             _context = context;
         }
@@ -36,7 +36,8 @@ namespace BCKGRND.Controllers
 
                 if (postHashPassword.Equals(user.UserPass))
                 {
-                    return JsonConvert.SerializeObject("Logged in successfully");
+                    //return JsonConvert.SerializeObject("Logged in successfully");
+                    return JsonConvert.SerializeObject(user);
                 }
                 else
                 {

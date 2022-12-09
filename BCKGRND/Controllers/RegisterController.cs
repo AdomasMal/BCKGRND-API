@@ -15,9 +15,9 @@ namespace BCKGRND.Controllers
     [ApiController]
     public class RegisterController : Controller
     {
-        private readonly UserContext _context;
+        private readonly DBContext _context;
 
-        public RegisterController(UserContext context)
+        public RegisterController(DBContext context)
         {
             _context = context;
         }

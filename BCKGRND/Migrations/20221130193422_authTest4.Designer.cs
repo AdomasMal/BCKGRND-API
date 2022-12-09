@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BCKGRND.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20221115194449_AuthTest")]
-    partial class AuthTest
+    [Migration("20221130193422_authTest4")]
+    partial class authTest4
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -27,19 +27,15 @@ namespace BCKGRND.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Salt")
-                        .IsRequired()
                         .HasColumnType("nvarChar(30)");
 
                     b.Property<string>("UserMail")
-                        .IsRequired()
                         .HasColumnType("nvarChar(100)");
 
                     b.Property<string>("UserName")
-                        .IsRequired()
                         .HasColumnType("nvarChar(30)");
 
                     b.Property<string>("UserPass")
-                        .IsRequired()
                         .HasColumnType("nvarChar(100)");
 
                     b.HasKey("ID");

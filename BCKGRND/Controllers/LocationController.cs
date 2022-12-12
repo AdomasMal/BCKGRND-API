@@ -28,6 +28,7 @@ namespace BCKGRND.Controllers
         [HttpPost(Name = "PostNewLocation")]
         public string Post([FromBody]Location Value)
         {
+            string responseBody;
             try
             {
                 Location location = new Location();
@@ -57,17 +58,20 @@ namespace BCKGRND.Controllers
                 }
                 _context.Add(location);
                 _context.SaveChanges();
-                return JsonConvert.SerializeObject("New location added");
+                responseBody = JsonConvert.SerializeObject("New location added");
             }
             catch (Exception ex)
             {
-                return JsonConvert.SerializeObject(ex.Message);
+                responseBody = JsonConvert.SerializeObject(ex.Message);
             }
+            Response.ContentLength = responseBody.Length;
+            return responseBody;
         }
 
         [HttpGet("{searchOptions}")]
         public string Get(string searchOptions)
         {
+            string responseBody;
             try
             {
                 List<string> optionList = searchOptions.Split(" ").ToList();
@@ -129,13 +133,15 @@ namespace BCKGRND.Controllers
                         location.Photos.Add(newPhoto);
                     }
                 }
-                
-                return JsonConvert.SerializeObject(locations2);
+
+                responseBody = JsonConvert.SerializeObject(locations2);
             }
             catch (Exception ex)
             {
-                return JsonConvert.SerializeObject(ex.Message);
+                responseBody = JsonConvert.SerializeObject(ex.Message);
             }
+            Response.ContentLength = responseBody.Length;
+            return responseBody;
         }
     }
 }

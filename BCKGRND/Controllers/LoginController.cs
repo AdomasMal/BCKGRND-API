@@ -25,7 +25,8 @@ namespace BCKGRND.Controllers
         [HttpPost]
         public string Post([FromBody]User value)
         {
-            if(_context.Users.Any(user => user.UserMail.Equals(value.UserMail)))
+            string responseBody;
+            if (_context.Users.Any(user => user.UserMail.Equals(value.UserMail)))
             {
                 User user = _context.Users.Where(user => user.UserMail.Equals(value.UserMail)).First();
 
@@ -36,18 +37,19 @@ namespace BCKGRND.Controllers
 
                 if (postHashPassword.Equals(user.UserPass))
                 {
-                    //return JsonConvert.SerializeObject("Logged in successfully");
-                    return JsonConvert.SerializeObject(user);
+                    responseBody = JsonConvert.SerializeObject("Logged in successfully");
                 }
                 else
                 {
-                    return JsonConvert.SerializeObject("Wrong password");
+                    responseBody = JsonConvert.SerializeObject("Wrong password");
                 }
             }
             else
             {
-                return JsonConvert.SerializeObject("User doesn't exist");
+                responseBody = JsonConvert.SerializeObject("User doesn't exist");
             }
+            Response.ContentLength = responseBody.Length;
+            return responseBody;
         }
     }
 }

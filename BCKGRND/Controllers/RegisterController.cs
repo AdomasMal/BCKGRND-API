@@ -25,6 +25,7 @@ namespace BCKGRND.Controllers
         [HttpPost]
         public string Post([FromBody]User value)
         {
+            string responseBody;
             if(!_context.Users.Any(user => user.UserMail.Equals(value.UserMail)))
             {
                 User user = new User();
@@ -39,17 +40,19 @@ namespace BCKGRND.Controllers
                 {
                     _context.Add(user);
                     _context.SaveChanges();
-                    return JsonConvert.SerializeObject("Registered successfully");
+                    responseBody = JsonConvert.SerializeObject("Registered successfully");
                 }
                 catch(Exception ex)
                 {
-                    return JsonConvert.SerializeObject(ex.Message);
+                    responseBody = JsonConvert.SerializeObject(ex.Message);
                 }
             }
             else
             {
-                return JsonConvert.SerializeObject("E-mail is already registered");
+                responseBody = JsonConvert.SerializeObject("E-mail is already registered");
             }
+            Response.ContentLength = responseBody.Length;
+            return responseBody;
         }
     }
 }

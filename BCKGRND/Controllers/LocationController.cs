@@ -59,6 +59,7 @@ namespace BCKGRND.Controllers
                 _context.Add(location);
                 _context.SaveChanges();
                 responseBody = JsonConvert.SerializeObject("New location added");
+                Utils.Common.addArcGisFeature(location);
             }
             catch (Exception ex)
             {
@@ -98,6 +99,11 @@ namespace BCKGRND.Controllers
                     float lon = float.Parse(optionList[2]);
                     float dist = float.Parse(optionList[3]);
                     locations = _context.Locations.Where(location => 2 * MathF.Atan2(MathF.Sqrt(MathF.Pow(MathF.Sin(MathF.Abs(lat - location.Latitude) / 2f * 0.01745f), 2) + MathF.Cos(lat * 0.01745f) * MathF.Cos(location.Latitude * 0.01745f) * MathF.Pow(MathF.Sin(MathF.Abs(lon - location.Longtitude) / 2f * 0.01745f), 2)), MathF.Sqrt(1 - (MathF.Pow(MathF.Sin(MathF.Abs(lat - location.Latitude) / 2f * 0.01745f), 2) + MathF.Cos(lat * 0.01745f) * MathF.Cos(location.Latitude * 0.01745f) * MathF.Pow(MathF.Sin(MathF.Abs(lon - location.Longtitude) / 2f * 0.01745f), 2)))) * 6371 < dist);
+                }
+                else if (optionList[0] == "id")
+                {
+                    int id = int.Parse(optionList[1]);
+                    locations = _context.Locations.Where(location => location.ID.Equals(id));
                 }
 
                 List<Location> locations2 = new List<Location>();

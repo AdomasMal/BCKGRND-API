@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using BCKGRND.Models;
 using Newtonsoft.Json;
 using System.Text;
+using Newtonsoft.Json.Linq;
 
 namespace BCKGRND.Controllers
 {
@@ -37,7 +38,7 @@ namespace BCKGRND.Controllers
 
                 if (postHashPassword.Equals(user.UserPass))
                 {
-                    responseBody = JsonConvert.SerializeObject("Logged in successfully");
+                    responseBody = JsonConvert.SerializeObject(user);
                 }
                 else
                 {
@@ -47,6 +48,32 @@ namespace BCKGRND.Controllers
             else
             {
                 responseBody = JsonConvert.SerializeObject("User doesn't exist");
+            }
+            Response.ContentLength = responseBody.Length;
+            return responseBody;
+        }
+
+        [HttpDelete("{id:int}")]
+        public string Delete(int id)
+        {
+            string responseBody;
+            try
+            {
+                if(_context.Users.Any(user => user.ID.Equals(id)))
+                {
+                    User user = _context.Users.FirstOrDefault(user => user.ID.Equals(id));
+                    _context.Users.Remove(user);
+                    _context.SaveChanges();
+                    responseBody = JsonConvert.SerializeObject("User deleted");
+                }
+                else
+                {
+                    responseBody = JsonConvert.SerializeObject("User does not exist");
+                }
+            }
+            catch (Exception ex)
+            {
+                responseBody = JsonConvert.SerializeObject(ex.Message);
             }
             Response.ContentLength = responseBody.Length;
             return responseBody;

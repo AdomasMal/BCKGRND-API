@@ -38,8 +38,8 @@ namespace BCKGRND.Utils
             List<Feature> features = new List<Feature>();
             Feature feature = new Feature();
             Geometry geometry = new Geometry();
-            geometry.x = location.Latitude;
-            geometry.y = location.Longtitude;
+            geometry.x = location.Longtitude;
+            geometry.y = location.Latitude;
             Attributes attributes = new Attributes();
             attributes.dbID = location.ID;
             feature.attributes = attributes;

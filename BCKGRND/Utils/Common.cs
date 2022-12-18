@@ -42,6 +42,7 @@ namespace BCKGRND.Utils
             geometry.y = location.Latitude;
             Attributes attributes = new Attributes();
             attributes.dbID = location.ID;
+            attributes.name = location.Name;
             feature.attributes = attributes;
             feature.geometry = geometry;
             features.Add(feature);
@@ -84,6 +85,7 @@ namespace BCKGRND.Utils
         public class Attributes
         {
             public int dbID;
+            public string name;
         }
 
         public class Response

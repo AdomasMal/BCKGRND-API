@@ -53,6 +53,48 @@ namespace BCKGRND.Controllers
             return responseBody;
         }
 
+        [HttpPut("{id}/{newPass}")]
+        public string Get(int id, string newPass, [FromBody] User value)
+        {
+            string responseBody;
+            try
+            {
+                if (_context.Users.Any(user => user.UserMail.Equals(value.UserMail)))
+                {
+                    User user = _context.Users.Where(user => user.UserMail.Equals(value.UserMail)).First();
+
+                    var postHashPassword = Convert.ToBase64String(
+                        Utils.Common.SaltHashPassword(
+                            Encoding.ASCII.GetBytes(value.UserPass),
+                            Convert.FromBase64String(user.Salt)));
+
+                    if (postHashPassword.Equals(user.UserPass))
+                    {
+                        user.Salt = Convert.ToBase64String(Utils.Common.GetRandomSalt(16));
+                        user.UserPass = Convert.ToBase64String(Utils.Common.SaltHashPassword(
+                            Encoding.ASCII.GetBytes(newPass),
+                            Convert.FromBase64String(user.Salt)));
+                        _context.SaveChanges();
+                        responseBody = JsonConvert.SerializeObject(user);
+                    }
+                    else
+                    {
+                        responseBody = JsonConvert.SerializeObject("Wrong password");
+                    }
+                }
+                else
+                {
+                    responseBody = JsonConvert.SerializeObject("User doesn't exist");
+                }
+            }
+            catch(Exception ex)
+            {
+                responseBody = JsonConvert.SerializeObject(ex);
+            }
+            Response.ContentLength = responseBody.Length;
+            return responseBody;
+        }
+
         [HttpDelete("{id:int}")]
         public string Delete(int id)
         {

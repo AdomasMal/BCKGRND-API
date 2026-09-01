@@ -1,16 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using BCKGRND.Models;
 using Newtonsoft.Json;
-using System.Text;
-using Newtonsoft.Json.Linq;
-using System.Diagnostics;
-using System.Text.RegularExpressions;
 
 namespace BCKGRND.Controllers
 {
@@ -25,7 +15,41 @@ namespace BCKGRND.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// For adding new location
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     POST /Location
+        ///     {
+        ///       "name": "Nice rock",
+        ///       "description": "A very beutiful rock",
+        ///       "latitude": 54.79,
+        ///       "longtitude": 25.04,
+        ///       "tags": [
+        ///         {
+        ///           "name": "rocks"
+        ///         },
+        ///         {
+        ///           "name": "nature"
+        ///         }
+        ///       ],
+        ///       "photos": [
+        ///         {
+        ///           "image": "image1Data"
+        ///         },
+        ///         {
+        ///           "image": "image2Data"
+        ///         }
+        ///       ]
+        ///     }
+        /// </remarks>
+        /// <returns> Returns status message</returns>
+        /// <response code="200">Returns "New location added"</response>
+        /// <response code="400">On execption</response>
         [HttpPost(Name = "PostNewLocation")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         public string Post([FromBody]Location Value)
         {
             string responseBody;
@@ -65,11 +89,33 @@ namespace BCKGRND.Controllers
             {
                 responseBody = JsonConvert.SerializeObject(ex.Message);
             }
-            Response.ContentLength = responseBody.Length;
+            Response.ContentLength = System.Text.ASCIIEncoding.UTF8.GetByteCount(responseBody);
             return responseBody;
         }
 
+        /// <summary>
+        /// For adding new location
+        /// </summary>
+        /// <remarks>
+        /// Sample requests:
+        /// 
+        ///   For search by tag ("tags" tag1 tag2 ... tagN):
+        ///   
+        ///     GET /Location/tags rocks tree
+        ///
+        ///   For search by name ("name" word1 word2 ... wordN):
+        ///   
+        ///     GET /Location/name rock cool
+        ///     
+        ///   For search by proximity ("proximity" latitude longtitude maxDistancekm):
+        ///   
+        ///     GET /Location/proximity 54.7 25 20
+        /// </remarks>
+        /// <returns> Returns status message</returns>
+        /// <response code="200">Returns list of locations</response>
+        /// <response code="400">On execption</response>
         [HttpGet("{searchOptions}")]
+        [ProducesResponseType(typeof(List<Location>), StatusCodes.Status200OK)]
         public string Get(string searchOptions)
         {
             string responseBody;
@@ -95,9 +141,10 @@ namespace BCKGRND.Controllers
                 else if (optionList[0] == "proximity")
                 {
                     //"proximity" latitude longtitude maxDistance
-                    float lat = float.Parse(optionList[1]);
-                    float lon = float.Parse(optionList[2]);
+                    float lat = float.Parse(optionList[1].Replace(',', '.'));
+                    float lon = float.Parse(optionList[2].Replace(',', '.'));
                     float dist = float.Parse(optionList[3]);
+                    Location location = new Location();
                     locations = _context.Locations.Where(location => 2 * MathF.Atan2(MathF.Sqrt(MathF.Pow(MathF.Sin(MathF.Abs(lat - location.Latitude) / 2f * 0.01745f), 2) + MathF.Cos(lat * 0.01745f) * MathF.Cos(location.Latitude * 0.01745f) * MathF.Pow(MathF.Sin(MathF.Abs(lon - location.Longtitude) / 2f * 0.01745f), 2)), MathF.Sqrt(1 - (MathF.Pow(MathF.Sin(MathF.Abs(lat - location.Latitude) / 2f * 0.01745f), 2) + MathF.Cos(lat * 0.01745f) * MathF.Cos(location.Latitude * 0.01745f) * MathF.Pow(MathF.Sin(MathF.Abs(lon - location.Longtitude) / 2f * 0.01745f), 2)))) * 6371 < dist);
                 }
                 else if (optionList[0] == "id")
@@ -105,7 +152,6 @@ namespace BCKGRND.Controllers
                     int id = int.Parse(optionList[1]);
                     locations = _context.Locations.Where(location => location.ID.Equals(id));
                 }
-
                 List<Location> locations2 = new List<Location>();
                 foreach(Location location in locations)
                 {
@@ -117,7 +163,6 @@ namespace BCKGRND.Controllers
                     newLocation.Longtitude = location.Longtitude;
                     newLocation.Tags = new List<Tag>();
                     newLocation.Photos = new List<Photo>();
-
                     locations2.Add(newLocation);
                 }
                 foreach(Location location in locations2)
@@ -129,7 +174,6 @@ namespace BCKGRND.Controllers
                         newTag.Name = tag.Name;
                         location.Tags.Add(tag);
                     }
-                    
                     foreach (Photo photo in _context.Photos.Where(p => p.Location.ID.Equals(location.ID)))
                     {
                         Photo newPhoto = new Photo();
@@ -146,7 +190,7 @@ namespace BCKGRND.Controllers
             {
                 responseBody = JsonConvert.SerializeObject(ex.Message);
             }
-            Response.ContentLength = responseBody.Length;
+            Response.ContentLength = System.Text.ASCIIEncoding.UTF8.GetByteCount(responseBody);
             return responseBody;
         }
     }

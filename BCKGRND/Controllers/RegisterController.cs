@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using BCKGRND.Models;
 using Newtonsoft.Json;
 using System.Text;
@@ -22,7 +16,24 @@ namespace BCKGRND.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// For registering new users
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     POST /Register
+        ///     {
+        ///        "UserMail": "test@mail.com",
+        ///        "UserName": "user",
+        ///        "UserPass": "pass1234"
+        ///     }
+        /// </remarks>
+        /// <returns> Returns status message</returns>
+        /// <response code="200">Returns either "Registered successfully" or "E-mail is already registered"</response>
+        /// <response code="400">On execption</response>
         [HttpPost]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         public string Post([FromBody]User value)
         {
             string responseBody;
@@ -51,7 +62,7 @@ namespace BCKGRND.Controllers
             {
                 responseBody = JsonConvert.SerializeObject("E-mail is already registered");
             }
-            Response.ContentLength = responseBody.Length;
+            Response.ContentLength = System.Text.ASCIIEncoding.UTF8.GetByteCount(responseBody);
             return responseBody;
         }
     }
